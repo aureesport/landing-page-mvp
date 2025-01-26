@@ -4,6 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logiciel Tout-en-Un pour Entreprises</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAxuAoQAmdBWsUnmV-3EphVg66xYEgbI-w",
+            authDomain: "logiciel-entreprise.firebaseapp.com",
+            projectId: "logiciel-entreprise",
+            storageBucket: "logiciel-entreprise.firebasestorage.app",
+            messagingSenderId: "284296677537",
+            appId: "1:284296677537:web:82690c75686968fbfe48e0",
+            measurementId: "G-P544JK30NL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("Page chargée");
+            
+            const form = document.getElementById("signup");
+            const confirmationMessage = document.getElementById("confirmation");
+            
+            if (form) {
+                form.addEventListener("submit", async function(event) {
+                    event.preventDefault();
+                    const emailInput = form.querySelector("input[type='email']");
+                    if (emailInput) {
+                        console.log("Email soumis :", emailInput.value);
+                        
+                        try {
+                            await addDoc(collection(db, "emails"), {
+                                email: emailInput.value,
+                                timestamp: serverTimestamp()
+                            });
+                            console.log("Email enregistré avec succès");
+                            confirmationMessage.style.display = "block";
+                            confirmationMessage.textContent = "Merci ! Votre inscription a été prise en compte.";
+                            emailInput.value = "";
+                        } catch (error) {
+                            console.error("Erreur lors de l'enregistrement :", error);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,31 +115,6 @@
             color: green;
         }
     </style>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log("Page chargée");
-            
-            const form = document.getElementById("signup");
-            const confirmationMessage = document.getElementById("confirmation");
-            
-            if (form) {
-                form.addEventListener("submit", function(event) {
-                    event.preventDefault();
-                    const emailInput = form.querySelector("input[type='email']");
-                    if (emailInput) {
-                        console.log("Email soumis :", emailInput.value);
-                        
-                        // Afficher un message de confirmation
-                        confirmationMessage.style.display = "block";
-                        confirmationMessage.textContent = "Merci ! Votre inscription a été prise en compte.";
-                        
-                        // Réinitialiser le champ email
-                        emailInput.value = "";
-                    }
-                });
-            }
-        });
-    </script>
 </head>
 <body>
     <div class="container">
