@@ -6,7 +6,7 @@
     <title>Logiciel Tout-en-Un pour Entreprises</title>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAxuAoQAmdBWsUnmV-3EphVg66xYEgbI-w",
@@ -21,11 +21,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             console.log("Page chargée");
             
             const form = document.getElementById("signup");
             const confirmationMessage = document.getElementById("confirmation");
+            const emailList = document.getElementById("email-list");
+            const exportBtn = document.getElementById("export-csv");
             
             if (form) {
                 form.addEventListener("submit", async function(event) {
@@ -44,12 +46,40 @@
                             confirmationMessage.style.display = "block";
                             confirmationMessage.textContent = "Merci ! Votre inscription a été prise en compte.";
                             emailInput.value = "";
+                            loadEmails();
                         } catch (error) {
                             console.error("Erreur lors de l'enregistrement :", error);
                         }
                     }
                 });
             }
+
+            async function loadEmails() {
+                emailList.innerHTML = "";
+                const querySnapshot = await getDocs(collection(db, "emails"));
+                querySnapshot.forEach((doc) => {
+                    const emailItem = document.createElement("li");
+                    emailItem.textContent = doc.data().email;
+                    emailList.appendChild(emailItem);
+                });
+            }
+
+            function exportToCSV() {
+                let csvContent = "data:text/csv;charset=utf-8,Email\n";
+                const emails = emailList.getElementsByTagName("li");
+                for (let email of emails) {
+                    csvContent += email.textContent + "\n";
+                }
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "emails_inscrits.csv");
+                document.body.appendChild(link);
+                link.click();
+            }
+            
+            exportBtn.addEventListener("click", exportToCSV);
+            loadEmails();
         });
     </script>
     <style>
@@ -115,6 +145,16 @@
             font-size: 18px;
             color: green;
         }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #e9ecef;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -129,6 +169,10 @@
             <button type="submit">S'inscrire</button>
         </form>
         <p id="confirmation"></p>
+        
+        <h2>Emails inscrits :</h2>
+        <ul id="email-list"></ul>
+        <button id="export-csv">Exporter en CSV</button>
     </div>
 </body>
 </html>
