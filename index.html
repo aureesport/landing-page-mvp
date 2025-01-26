@@ -7,7 +7,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-        import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+        import { getAuth, sendSignInLinkToEmail } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAxuAoQAmdBWsUnmV-3EphVg66xYEgbI-w",
@@ -22,6 +22,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        auth.languageCode = 'fr';
         
         document.addEventListener("DOMContentLoaded", async function() {
             console.log("Page chargée");
@@ -48,7 +49,7 @@
                             
                             // Envoyer un email de confirmation
                             const actionCodeSettings = {
-                                url: window.location.href,
+                                url: "https://ton-utilisateur.github.io/ton-depot/", // Remplace par ton URL GitHub Pages
                                 handleCodeInApp: true
                             };
                             await sendSignInLinkToEmail(auth, email, actionCodeSettings);
@@ -181,10 +182,6 @@
             <button type="submit">S'inscrire</button>
         </form>
         <p id="confirmation"></p>
-        
-        <h2>Emails inscrits :</h2>
-        <ul id="email-list"></ul>
-        <button id="export-csv">Exporter en CSV</button>
     </div>
 </body>
 </html>
