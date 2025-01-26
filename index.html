@@ -12,7 +12,7 @@
             apiKey: "AIzaSyAxuAoQAmdBWsUnmV-3EphVg66xYEgbI-w",
             authDomain: "logiciel-entreprise.firebaseapp.com",
             projectId: "logiciel-entreprise",
-            storageBucket: "logiciel-entreprise.firebasestorage.app",
+            storageBucket: "logiciel-entreprise.appspot.com",
             messagingSenderId: "284296677537",
             appId: "1:284296677537:web:82690c75686968fbfe48e0",
             measurementId: "G-P544JK30NL"
@@ -32,11 +32,12 @@
                     event.preventDefault();
                     const emailInput = form.querySelector("input[type='email']");
                     if (emailInput) {
-                        console.log("Email soumis :", emailInput.value);
+                        const email = emailInput.value.trim();
+                        console.log("Tentative d'enregistrement de l'email:", email);
                         
                         try {
                             await addDoc(collection(db, "emails"), {
-                                email: emailInput.value,
+                                email: email,
                                 timestamp: serverTimestamp()
                             });
                             console.log("Email enregistré avec succès");
