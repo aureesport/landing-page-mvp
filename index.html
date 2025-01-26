@@ -7,6 +7,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+        import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
         
         const firebaseConfig = {
             apiKey: "AIzaSyAxuAoQAmdBWsUnmV-3EphVg66xYEgbI-w",
@@ -20,6 +21,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
         
         document.addEventListener("DOMContentLoaded", async function() {
             console.log("Page chargée");
@@ -43,12 +45,22 @@
                                 timestamp: serverTimestamp()
                             });
                             console.log("Email enregistré avec succès");
+                            
+                            // Envoyer un email de confirmation
+                            const actionCodeSettings = {
+                                url: window.location.href,
+                                handleCodeInApp: true
+                            };
+                            await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+                            window.localStorage.setItem("emailForSignIn", email);
+                            console.log("Email de confirmation envoyé");
+                            
                             confirmationMessage.style.display = "block";
-                            confirmationMessage.textContent = "Merci ! Votre inscription a été prise en compte.";
+                            confirmationMessage.textContent = "Merci ! Vérifiez votre boîte mail pour confirmer votre inscription.";
                             emailInput.value = "";
                             loadEmails();
                         } catch (error) {
-                            console.error("Erreur lors de l'enregistrement :", error);
+                            console.error("Erreur lors de l'enregistrement ou de l'envoi de l'email :", error);
                         }
                     }
                 });
