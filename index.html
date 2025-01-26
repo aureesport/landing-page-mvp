@@ -61,18 +61,33 @@
         button:hover {
             background: #218838;
         }
+        #confirmation {
+            display: none;
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             console.log("Page chargée");
             
             const form = document.getElementById("signup");
+            const confirmationMessage = document.getElementById("confirmation");
+            
             if (form) {
                 form.addEventListener("submit", function(event) {
                     event.preventDefault();
                     const emailInput = form.querySelector("input[type='email']");
                     if (emailInput) {
                         console.log("Email soumis :", emailInput.value);
+                        
+                        // Afficher un message de confirmation
+                        confirmationMessage.style.display = "block";
+                        confirmationMessage.textContent = "Merci ! Votre inscription a été prise en compte.";
+                        
+                        // Réinitialiser le champ email
+                        emailInput.value = "";
                     }
                 });
             }
@@ -90,6 +105,7 @@
             <input type="email" placeholder="Votre email" required>
             <button type="submit">S'inscrire</button>
         </form>
+        <p id="confirmation"></p>
     </div>
 </body>
 </html>
